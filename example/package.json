@@ -12,6 +12,9 @@
   "keywords": [],
   "author": "debugger-007",
   "license": "ISC",
+  "alias": {
+    "electron-bridge": "../dist/index.js"
+  },
   "devDependencies": {
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
