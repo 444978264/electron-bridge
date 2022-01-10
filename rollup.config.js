@@ -1,6 +1,7 @@
 import common from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
+import peer from 'rollup-plugin-peer-deps-external';
 import {terser} from 'rollup-plugin-terser';
 import rpt2 from 'rollup-plugin-typescript2';
 
@@ -36,6 +37,6 @@ export default {
       plugins: [],
     },
   ],
-  plugins: [resolve(), common(), json(), rpt2(), terser()],
+  plugins: [peer(), resolve(), common(), json(), rpt2(), terser()],
   external: ['rxjs'],
 };
