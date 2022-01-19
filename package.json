@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "./index.js",
-  "module": "./index.mjs",
+  "module": "./index.esm.js",
   "browser": {
-    "./index.js": "./index.browser.js",
-    "./index.mjs": "./index.browser.mjs"
+    "./index.js": "./browser.js",
+    "./index.esm.js": "./browser.esm.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

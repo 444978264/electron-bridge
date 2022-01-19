@@ -8,7 +8,7 @@ import rpt2 from 'rollup-plugin-typescript2';
 export default {
   input: {
     index: './src/ipc.main.ts',
-    'index.browser': './src/ipc.renderer.ts',
+    browser: './src/ipc.renderer.ts',
     libs: './src/common/index.ts',
   },
   output: [
@@ -28,9 +28,9 @@ export default {
       dir: 'dist',
       entryFileNames(chunkInfo) {
         if (chunkInfo.name === 'libs') {
-          return '[name]/index.mjs';
+          return '[name]/index.esm.js';
         }
-        return '[name].mjs';
+        return '[name].esm.js';
       },
       format: 'es',
       name: 'version',
