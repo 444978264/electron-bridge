@@ -1,9 +1,10 @@
-abstract class ServiceLifeCycle {
-  beforeQuit?(): void;
+import {ILifeCycle} from './lifecycle';
+
+export interface IServiceBase {
+  displayName: string;
+  new (...args: any): ILifeCycle;
 }
 
-export class Service implements ServiceLifeCycle {
-  constructor() {
-    // super();
-  }
+export class Service<T> {
+  constructor(d: T) {}
 }
