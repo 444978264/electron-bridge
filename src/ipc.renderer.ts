@@ -14,15 +14,17 @@ export const tt: Observable<any> = new Observable(observer => {
 console.log(a, 'aaa');
 
 class Test2 {
+  static readonly channel = 'hello';
   hello() {
     console.log('hello world');
   }
 }
 
 class Test {
+  static readonly channel = 'world';
   constructor(public test: Test2) {
     console.log(this.test);
   }
 }
 
-ServiceModule.inject([Test2, Test]);
+console.log(new ServiceModule(Test2, Test));
