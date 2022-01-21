@@ -1,87 +1,97 @@
-// import {ILifeCycle} from './lifecycle';
-
-// interface IServiceName {
-//   displayName: string;
-// }
-
-// type IMultipleServiceTuple<T> = {
-//   [k in keyof T]: IService<T[k]>;
-// };
-
-// type IService<T> = T extends {
-//   new (...args: infer P): ILifeCycle;
-// } & IServiceName
-//   ? P['length'] extends 0
-//     ? T
-//     : [T, P]
-//   : T extends [...infer U]
-//   ? IService<U[0]>
-//   : IServiceName;
-
-// export class ServiceModule<T extends any[]> {
-//   static provider<T extends any[]>(args: [...IMultipleServiceTuple<T>]) {}
-//   public serviceContainer = new Map<string, ILifeCycle>();
-//   constructor(args: [...IMultipleServiceTuple<T>]) {
-//     args.forEach(item => {
-//       //   if (Array.isArray(item)) {
-//       //     const [ctor, params] = item;
-//       //   } else {
-//       //     this.serviceContainer.set(item.displayName, [item]);
-//       //   }
-//     });
-//   }
-// }
-
-// new ServiceModule([
-//   class {
-//     static displayName = 'haha';
-//     // constructor(d: number) {}
-//   },
-//   [
-//     class {
-//       static displayName = 'haha';
-//       constructor(d: number) {}
-//     },
-//     [1],
-//   ],
-// ]);
 import 'reflect-metadata';
+import {ILifeCycle} from './lifecycle';
 
-type Constructor<T = any> = new (...args: any[]) => T;
+interface Constructor<T, U extends string> {
+  readonly channel: U;
+  new (...args: any[]): T & ILifeCycle;
+}
 
-const EMPTY_MODULE = new Set();
+type IChannel<T> = T extends {
+  channel: infer U;
+}
+  ? U
+  : any;
 
-class ServiceModule {
-  static ctorCollection = EMPTY_MODULE;
+type IServiceManager<T> = {
+  [k in keyof T]: IChannel<T[k]>;
+};
 
-  static inject(ctors: Constructor[]) {
-    if (ServiceModule.ctorCollection === EMPTY_MODULE) {
-      ServiceModule.ctorCollection = new Set(ctors);
-    } else {
-      ctors.forEach(ctor => {
-        ServiceModule.ctorCollection.add(ctor);
-      });
+type IServiceChannel<T> = T extends Array<infer P> ? P : any;
+
+type IService<T, U> = T extends [infer P, ...infer R]
+  ? P extends {
+      readonly channel: any;
+      new (...args: any[]): infer O;
     }
-  }
+    ? P['channel'] extends U
+      ? O
+      : IService<R, U>
+    : never
+  : never;
 
-  static provider(ctor: Constructor) {
+export class ServiceModule<
+  T extends Constructor<any, any>[],
+  U = IServiceChannel<[...IServiceManager<T>]>,
+> {
+  static readonly container = new WeakMap();
+  static provider(ctor: Constructor<any, any>) {
     return Reflect.getMetadata('design:paramtypes', ctor);
   }
+  private serviceMap = new Map<U, Constructor<any, any>>();
+  private serviceManager = new Map<U, IService<T, U>>();
 
-  private container = new WeakMap();
+  constructor(...args: T) {
+    args.forEach(ctor => {
+      this.serviceMap.set(ctor.channel, ctor);
+    });
+  }
 
-  private get(target: Constructor) {
+  private use(target: Constructor<any, any>) {
     const providers = ServiceModule.provider(target);
 
-    const args = providers.map((ctor: Constructor) => {
-      if (this.container.has(ctor)) {
-        return this.container.get(ctor);
+    if (
+      this.serviceManager.has(target.channel) &&
+      !ServiceModule.container.has(target)
+    ) {
+      throw new Error(`name[${target.channel}] already exists`);
+    }
+
+    const args = providers.map((ctor: Constructor<any, any>) => {
+      if (ServiceModule.container.has(ctor)) {
+        return ServiceModule.container.get(ctor);
       }
       const provider = new ctor();
-      this.container.set(ctor, provider);
+      ServiceModule.container.set(ctor, provider);
       return provider;
     });
 
-    return new target(...args);
+    const service = new target(...args);
+
+    ServiceModule.container.set(target, service);
+
+    this.serviceManager.set(target.channel, service);
+
+    return service;
+  }
+
+  service<O extends U>(name: O): IService<T, O> {
+    if (this.serviceManager.has(name)) {
+      return this.serviceManager.get(name)!;
+    }
+
+    if (this.serviceMap.has(name)) {
+      return this.use(this.serviceMap.get(name)!);
+    }
+
+    throw new Error(`no service found`);
+  }
+
+  destroy() {
+    this.serviceManager.forEach((service: ILifeCycle) => {
+      service.beforeQuit?.();
+      service.willQuit?.();
+      service.quit?.();
+    });
+    this.serviceManager.clear();
   }
 }

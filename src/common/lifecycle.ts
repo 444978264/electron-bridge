@@ -7,7 +7,7 @@ export interface ILifeCycle {
   windowCreated?(win: BrowserWindow): void;
   beforeQuit?(): void;
   willQuit?(): void;
-  quit?(exitCode: number): void;
+  quit?(exitCode?: number): void;
 }
 
 export class LifeCycle {

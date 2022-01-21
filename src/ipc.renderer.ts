@@ -1,5 +1,5 @@
 import {ipcRenderer} from 'electron';
-import {Observable} from './common';
+import {Observable, ServiceModule} from './common';
 
 console.log(ipcRenderer, 'ipcRenderer');
 
@@ -12,3 +12,17 @@ export const tt: Observable<any> = new Observable(observer => {
 });
 
 console.log(a, 'aaa');
+
+class Test2 {
+  hello() {
+    console.log('hello world');
+  }
+}
+
+class Test {
+  constructor(public test: Test2) {
+    console.log(this.test);
+  }
+}
+
+ServiceModule.inject([Test2, Test]);
