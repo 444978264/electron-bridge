@@ -46,7 +46,9 @@ export class ServiceModule<
     });
   }
 
-  private use(target: Constructor<any, any>) {
+  public use<R extends Constructor<any, any>>(
+    target: R,
+  ): IService<T, R['channel']> {
     const providers = ServiceModule.provider(target);
 
     if (

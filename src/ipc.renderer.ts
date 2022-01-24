@@ -1,30 +1,22 @@
 import {ipcRenderer} from 'electron';
-import {Observable, ServiceModule} from './common';
+import {IRequest} from './common/protocol';
+import {createChannelService} from './utils';
 
-console.log(ipcRenderer, 'ipcRenderer');
+let id = 0;
+export class IPCRenderer {
+  public channelService = createChannelService(ipcRenderer);
+  // serviceManager =
+  constructor() {
+    ipcRenderer.send('');
+  }
 
-export const a: Record<'aa', number> = {
-  aa: 21212,
-};
+  send<T extends Omit<IRequest, 'channel'>>(channel: string, data: T) {
+    ipcRenderer.send(channel, {...data, channel});
+  }
 
-export const tt: Observable<any> = new Observable(observer => {
-  observer.next('haha');
-});
+  call<T>(channel: string, data: T) {}
 
-console.log(a, 'aaa');
-
-class Test2 {
-  static readonly channel = 'hello';
-  hello() {
-    console.log('hello world');
+  subscribe(channel: string) {
+    return this.channelService(channel).subscribe(res => {});
   }
 }
-
-class Test {
-  static readonly channel = 'world';
-  constructor(public test: Test2) {
-    console.log(this.test);
-  }
-}
-
-console.log(new ServiceModule(Test2, Test));

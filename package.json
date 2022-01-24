@@ -2,20 +2,10 @@
   "name": "one",
   "version": "1.0.0",
   "description": "",
-  "main": "./cjs/index.js",
-  "module": "./es/index.js",
-  "browser": {
-    "./cjs/index.js": "./cjs/browser.js",
-    "./es/index.js": "./es/browser.js"
-  },
-  "typings": "src/ipc.main.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "electron": "npx electron main.js",
+    "electron": "npx electron dist/index.js",
     "start": "rollup -cw",
     "build": "rollup --config"
   },

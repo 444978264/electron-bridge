@@ -10,47 +10,33 @@ import rpt2 from 'rollup-plugin-typescript2';
 const SOURCE_DIR = path.resolve(__dirname);
 const OUTPUT_DIR = path.resolve(__dirname, './dist');
 
+const PLUGINS = [
+  peer(),
+  resolve(),
+  common(),
+  json(),
+  rpt2(),
+  terser(),
+  copy({
+    targets: [{src: `${SOURCE_DIR}/package.json`, dest: OUTPUT_DIR}],
+    verbose: true,
+  }),
+];
+
 export default {
   input: {
-    index: './src/ipc.main.ts',
-    browser: './src/ipc.renderer.ts',
+    index: './src/main.ts',
+    bridge: './src/bridge.ts',
   },
-  output: [
-    {
-      dir: OUTPUT_DIR,
-      entryFileNames(chunkInfo) {
-        return '[format]/[name].js';
-      },
-      chunkFileNames(chunkInfo) {
-        return '[format]/[name].js';
-      },
-      format: 'cjs',
-      name: 'version',
-      plugins: [],
+  output: {
+    dir: OUTPUT_DIR,
+    entryFileNames(chunkInfo) {
+      return '[name].js';
     },
-    {
-      dir: OUTPUT_DIR,
-      entryFileNames() {
-        return '[format]/[name].js';
-      },
-      chunkFileNames(chunkInfo) {
-        return '[format]/[name].js';
-      },
-      format: 'es',
-      name: 'version',
-      plugins: [],
+    chunkFileNames(chunkInfo) {
+      return 'chunks/[name].js';
     },
-  ],
-  plugins: [
-    peer(),
-    resolve(),
-    common(),
-    json(),
-    rpt2(),
-    terser(),
-    copy({
-      targets: [{src: `${SOURCE_DIR}/package.json`, dest: OUTPUT_DIR}],
-      verbose: true,
-    }),
-  ],
+    format: 'cjs',
+  },
+  plugins: PLUGINS,
 };
