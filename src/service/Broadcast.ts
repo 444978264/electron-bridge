@@ -19,4 +19,8 @@ export class Broadcast extends Subject<IRequest> {
     this.next(data);
     return;
   }
+
+  log() {
+    console.log('Broadcast');
+  }
 }
