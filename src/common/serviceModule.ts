@@ -1,7 +1,7 @@
 import 'reflect-metadata';
-import {ILifeCycle} from './lifecycle';
+import {ILifeCycle} from '../service/LifeCycle';
 
-interface Constructor<T, U extends string> {
+export interface Constructor<T, U extends string> {
   readonly channel: U;
   new (...args: any[]): T & ILifeCycle;
 }

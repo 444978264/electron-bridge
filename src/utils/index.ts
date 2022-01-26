@@ -31,29 +31,3 @@ export function createChannelService<R extends NodeJS.EventEmitter>(
     }).pipe(shareReplay({refCount: true, bufferSize: 1}));
   };
 }
-
-export function createChannelPromise<R extends NodeJS.EventEmitter>(
-  emitter: R,
-) {
-  return function <T, C extends IParams<R['once']>[0]>(channel: C) {
-    return new Observable<{
-      event: IParams<IParams<R['once']>[1]>[0];
-      data: T;
-    }>(observer => {
-      const handle: IParams<R['once']>[1] = (
-        e: IParams<IParams<R['once']>[1]>[0],
-        data: T,
-      ) => {
-        observer.next({
-          event: e,
-          data,
-        });
-        observer.complete();
-      };
-      emitter.once(channel, handle);
-      return () => {
-        emitter.removeListener(channel, handle);
-      };
-    }).pipe(shareReplay({refCount: true, bufferSize: 1}));
-  };
-}

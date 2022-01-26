@@ -5,9 +5,9 @@ import {createChannelService} from './utils';
 let id = 0;
 export class IPCRenderer {
   public channelService = createChannelService(ipcRenderer);
-  // serviceManager =
   constructor() {
-    ipcRenderer.send('');
+    ipcRenderer.send('hello');
+    ipcRenderer.on('hello', () => {});
   }
 
   send<T extends Omit<IRequest, 'channel'>>(channel: string, data: T) {

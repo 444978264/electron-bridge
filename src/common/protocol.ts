@@ -1,3 +1,7 @@
+import {ipcMain, IpcMainEvent} from 'electron';
+import {Observable, Subscription} from 'rxjs';
+import {Broadcast} from '../service/Broadcast';
+
 // response
 export enum IResponseType {
   hello = 1000, // 建立连接
@@ -66,6 +70,21 @@ export type IRequest<T = any> =
   | IRequestSubscribe<T>
   | IRequestUnSubscribe<T>;
 
-export class Protocol {
-  constructor() {}
+export class Protocol extends Subscription {
+  static readonly HELLO = 'ipc:hello';
+  constructor() {
+    super();
+    new Observable<IRequest>(observer => {
+      const listen = ({sender}: IpcMainEvent, data: IRequest) => {
+        // observer.next({
+        //   sender,
+        //   data,
+        // });
+      };
+      ipcMain.on(Protocol.HELLO, listen);
+      return () => {
+        ipcMain.removeListener(Protocol.HELLO, listen);
+      };
+    });
+  }
 }

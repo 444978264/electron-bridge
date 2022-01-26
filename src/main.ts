@@ -1,11 +1,17 @@
 import {app, BrowserWindow, ipcMain} from 'electron';
 import path from 'path';
 import {ServiceModule} from './common/serviceModule';
-import {IPCMain} from './ipc.main';
+import {Broadcast} from './service/Broadcast';
+import {ResourceManager} from './service/resourceManager';
+import {WindowManager} from './service/windowManager';
 
-const sender = new IPCMain().sender;
-console.log(sender);
-const serviceModule = new ServiceModule();
+const serviceModule = new ServiceModule(
+  Broadcast,
+  ResourceManager,
+  WindowManager,
+);
+
+// console.log(serviceModule.service('ipcMain'), 'ipcMain');
 
 app.whenReady().then(() => {
   const win = new BrowserWindow({
