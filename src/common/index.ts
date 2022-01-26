@@ -1,2 +1,2 @@
 export * from './observable';
-export * from './serviceModule';
+export * from './moduleProvider';

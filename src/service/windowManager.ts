@@ -3,7 +3,7 @@ import {
   BrowserWindowConstructorOptions,
   WebContents,
 } from 'electron';
-import {Constructor} from '../common/serviceModule';
+import {Constructor} from '../common/moduleProvider';
 
 export class WindowManager {
   static readonly channel = 'windowManager';

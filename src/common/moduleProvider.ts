@@ -29,7 +29,7 @@ type IService<T, U> = T extends [infer P, ...infer R]
     : never
   : never;
 
-export class ServiceModule<
+export class ModuleProvider<
   T extends Constructor<any, any>[],
   U = IServiceChannel<[...IServiceManager<T>]>,
 > {
@@ -49,27 +49,27 @@ export class ServiceModule<
   public use<R extends Constructor<any, any>>(
     target: R,
   ): IService<T, R['channel']> {
-    const providers = ServiceModule.provider(target);
+    const providers = ModuleProvider.provider(target);
 
     if (
       this.serviceManager.has(target.channel) &&
-      !ServiceModule.container.has(target)
+      !ModuleProvider.container.has(target)
     ) {
       throw new Error(`name[${target.channel}] already exists`);
     }
 
     const args = providers.map((ctor: Constructor<any, any>) => {
-      if (ServiceModule.container.has(ctor)) {
-        return ServiceModule.container.get(ctor);
+      if (ModuleProvider.container.has(ctor)) {
+        return ModuleProvider.container.get(ctor);
       }
       const provider = new ctor();
-      ServiceModule.container.set(ctor, provider);
+      ModuleProvider.container.set(ctor, provider);
       return provider;
     });
 
     const service = new target(...args);
 
-    ServiceModule.container.set(target, service);
+    ModuleProvider.container.set(target, service);
 
     this.serviceManager.set(target.channel, service);
 
