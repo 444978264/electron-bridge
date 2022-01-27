@@ -29,6 +29,8 @@ type IService<T, U> = T extends [infer P, ...infer R]
     : never
   : never;
 
+export const Injectable = (): ClassDecorator => target => {};
+
 export class ModuleProvider<
   T extends Constructor<any, any>[],
   U = IServiceChannel<[...IServiceManager<T>]>,

@@ -1,5 +1,6 @@
+import {Injectable} from '../common/moduleProvider';
 import {Broadcast} from './Broadcast';
-const Injectable = (): ClassDecorator => target => {};
+
 @Injectable()
 export class ResourceManager {
   static readonly channel = 'resource';
