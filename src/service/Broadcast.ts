@@ -1,6 +1,7 @@
 import {filter, shareReplay, Subject} from 'rxjs';
+import {Injectable} from '../common/moduleProvider';
 import {IRequest} from '../common/protocol';
-
+@Injectable()
 export class Broadcast extends Subject<IRequest> {
   static readonly channel = 'eventBus';
 

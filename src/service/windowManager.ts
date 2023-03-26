@@ -3,8 +3,8 @@ import {
   BrowserWindowConstructorOptions,
   WebContents,
 } from 'electron';
-import {Constructor} from '../common/moduleProvider';
-
+import {Constructor, Injectable} from '../common/moduleProvider';
+@Injectable()
 export class WindowManager {
   static readonly channel = 'windowManager';
   private _windows = new Set<BrowserWindow>();

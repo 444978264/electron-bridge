@@ -7,6 +7,10 @@ import {WindowManager} from './service/windowManager';
 
 const provider = new ModuleProvider(Broadcast, ResourceManager, WindowManager);
 
+setTimeout(() => {
+  console.log(provider.service('resource'), "provider.service('resource')");
+}, 3000);
+
 app.whenReady().then(() => {
   const win = new BrowserWindow({
     width: 800,
